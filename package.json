@@ -12,8 +12,12 @@
   "scripts": {
     "start": "node src/kick_chat.js",
     "install": "cd boringssl && npm i",
+    "dev": "nodemon src/kick_chat.js",
     "build:boringssl-win": "cd boringssl && npm run build-win && mkdir ../bin -p && cp ./build/win.node ../bin/boringssl.node",
     "build:boringssl-linux": "cd boringssl && npm run build-linux && mkdir ../bin -p && cp ./build/linux.node ../bin/boringssl.node",
     "build:boringssl-macos": "cd boringssl && npm run build-macos && mkdir ../bin -p && cp ./build/macos.node ../bin/boringssl.node"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }
