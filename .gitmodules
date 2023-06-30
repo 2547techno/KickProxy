@@ -1,0 +1,3 @@
+[submodule "boringssl"]
+	path = boringssl
+	url = git@github.com:gssvv/rust-boring-ssl-client.git

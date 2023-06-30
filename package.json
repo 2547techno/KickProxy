@@ -10,8 +10,10 @@
     "ws": "^8.13.0"
   },
   "scripts": {
-    "build": "tsc",
     "start": "node kick_chat.js",
-    "dev": "ts-node ."
+    "install": "cd boringssl && npm i",
+    "build:boringssl-win": "cd boringssl && npm run build-win && mkdir ../bin -p && cp ./build/win.node ../bin/boringssl.node",
+    "build:boringssl-linux": "cd boringssl && npm run build-linux && mkdir ../bin -p && cp ./build/linux.node ../bin/boringssl.node",
+    "build:boringssl-macos": "cd boringssl && npm run build-macos && mkdir ../bin -p && cp ./build/macos.node ../bin/boringssl.node"
   }
 }
