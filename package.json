@@ -1,7 +1,7 @@
 {
   "name": "kickproxy",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/kick_chat.js",
   "author": "Auro <35087590+MrAuro@users.noreply.github.com>",
   "license": "MIT",
   "type": "module",
@@ -10,7 +10,7 @@
     "ws": "^8.13.0"
   },
   "scripts": {
-    "start": "node kick_chat.js",
+    "start": "node src/kick_chat.js",
     "install": "cd boringssl && npm i",
     "build:boringssl-win": "cd boringssl && npm run build-win && mkdir ../bin -p && cp ./build/win.node ../bin/boringssl.node",
     "build:boringssl-linux": "cd boringssl && npm run build-linux && mkdir ../bin -p && cp ./build/linux.node ../bin/boringssl.node",
