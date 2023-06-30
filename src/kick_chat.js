@@ -1,6 +1,8 @@
 import WebSocket from "ws";
 import net from "net";
 
+import { KickApi } from "./KickApi.js";
+
 const SERVER_PORT = 8080;
 const SERVER_HOST = "localhost";
 const USER_ID = "668";
