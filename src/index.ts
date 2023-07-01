@@ -15,8 +15,8 @@ kickServer.on("open", async () => {
     console.log("socket open");
     await kickServer.connectToChannel("xqc");
     await kickServer.connectToChannel("xqc");
-})
-kickServer.connectSocket()
+});
+kickServer.connectSocket();
 
 let state = 0;
 const clients: any[] = [];

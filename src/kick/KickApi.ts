@@ -4,7 +4,7 @@ const ssl: (config: Config, _: string, __: string) => SSLResponse = r;
 
 enum HTTPMethod {
     GET = "GET",
-    POST  = "POST",
+    POST = "POST",
 }
 
 interface Config extends DefaultConfig {
@@ -58,7 +58,7 @@ class KickApi {
     }
 
     async getChannel(channel: string) {
-        return await this.get(`api/v2/channels/${channel}`)
+        return await this.get(`api/v2/channels/${channel}`);
     }
 }
 

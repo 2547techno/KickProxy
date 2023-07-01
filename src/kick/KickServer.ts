@@ -29,10 +29,10 @@ class KickServer extends EventEmitter {
         this.socket.onclose = (event: CloseEvent) => this.emit("close", event);
 
         this.socket.onmessage = (event: MessageEvent) => {
-            this.emit("message", event)
+            this.emit("message", event);
             let data: any;
             try {
-                data = JSON.parse(event.data as string)
+                data = JSON.parse(event.data as string);
                 // console.log(data);
             } catch (err) {
                 console.error("Couldn't parse message ", (err as Error).message);
@@ -43,12 +43,12 @@ class KickServer extends EventEmitter {
                 // chatrooms.668.v2
                 const channelIdRegex = /^chatrooms\.(\d+)\.v2$/m;
 
-                const match = data.channel.match(channelIdRegex)
+                const match = data.channel.match(channelIdRegex);
                 if(!match) return;
 
-                this.event.emit("channel_connect", parseInt(match[1]))
+                this.event.emit("channel_connect", parseInt(match[1]));
             }
-        }
+        };
     }
 
     disconnectSocket() {
@@ -73,35 +73,35 @@ class KickServer extends EventEmitter {
                     },
                 })
             );
-            this.channels.set(channelId, ChannelStatus.CONNECTING)
+            this.channels.set(channelId, ChannelStatus.CONNECTING);
             console.log(`Subscribing to chatrooms.${channelId}.v2`);
             
             const timeout = setTimeout(() => {
-                this.channels.delete(channelId)
-                console.error(`Timed out subscribing to 'chatrooms.${channelId}.v2'`)
-                return rej()
+                this.channels.delete(channelId);
+                console.error(`Timed out subscribing to 'chatrooms.${channelId}.v2'`);
+                return rej();
             }, 5000);
             
             // {"event":"pusher_internal:subscription_succeeded","data":"{}","channel":"chatrooms.668.v2"}
             this.event.on("channel_connect", (cid: number) => {
                 if (cid === channelId) {
-                    clearTimeout(timeout)
-                    this.channels.set(channelId, ChannelStatus.CONNECTED)
+                    clearTimeout(timeout);
+                    this.channels.set(channelId, ChannelStatus.CONNECTED);
                     console.log(`Subscribed to chatrooms.${channelId}.v2`);
-                    return res(channelId)
+                    return res(channelId);
                 }
-            })
+            });
 
 
-        })
+        });
     }
 
     async connectToChannel(channel: string) {
-        const { bodyJson } = await kickApi.getChannel(channel)
+        const { bodyJson } = await kickApi.getChannel(channel);
         const { id }: {id: number} = JSON.parse(bodyJson);
 
         if (!id) {
-            throw new Error("Missing 'id' field in response")
+            throw new Error("Missing 'id' field in response");
         }
 
         await this.subscribeToChannel(id);
