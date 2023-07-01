@@ -14,7 +14,7 @@ so the provided channel for the IRC connection does nothing. Meant to be used in
 1. Install [Node.js](https://nodejs.org/en/download/)
 2. Download the zip file
 
-   ![image](download.png)
+    ![image](download.png)
 
 3. Extract the zip file
 4. Open a terminal in the extracted folder
@@ -22,9 +22,9 @@ so the provided channel for the IRC connection does nothing. Meant to be used in
 6. Run `npm start`
 7. Add a new IRC connection in Chatterino with the following settings:
 
-   **MAKE SURE SSL IS UNCHECKED**
+    **MAKE SURE SSL IS UNCHECKED**
 
-   ![image](chatterino.png)
+    ![image](chatterino.png)
 
 ---
 
@@ -38,4 +38,4 @@ so the provided channel for the IRC connection does nothing. Meant to be used in
 
 ## I can't see emotes
 
-Unfortunately Chatterino's IRC channels do not allow for emotes (https://github.com/Chatterino/chatterino2/issues/1378), so Kick and 7TV emotes cannot be  viewed through the proxy
+Unfortunately Chatterino's IRC channels do not allow for emotes (https://github.com/Chatterino/chatterino2/issues/1378), so Kick and 7TV emotes cannot be viewed through the proxy

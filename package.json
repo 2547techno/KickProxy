@@ -1,23 +1,35 @@
 {
-  "name": "kickproxy",
-  "version": "1.0.0",
-  "main": "src/kick_chat.js",
-  "author": "Auro <35087590+MrAuro@users.noreply.github.com>",
-  "license": "MIT",
-  "type": "module",
-  "dependencies": {
-    "@types/ws": "^8.5.5",
-    "ws": "^8.13.0"
-  },
-  "scripts": {
-    "start": "node src/kick_chat.js",
-    "install": "cd boringssl && npm i",
-    "dev": "nodemon src/kick_chat.js",
-    "build:boringssl-win": "cd boringssl && npm run build-win && mkdir ../bin -p && cp ./build/win.node ../bin/boringssl.node",
-    "build:boringssl-linux": "cd boringssl && npm run build-linux && mkdir ../bin -p && cp ./build/linux.node ../bin/boringssl.node",
-    "build:boringssl-macos": "cd boringssl && npm run build-macos && mkdir ../bin -p && cp ./build/macos.node ../bin/boringssl.node"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
-  }
+    "name": "kickproxy",
+    "version": "1.0.0",
+    "main": "src/index.js",
+    "author": "Auro <35087590+MrAuro@users.noreply.github.com>",
+    "license": "MIT",
+    "type": "module",
+    "dependencies": {
+        "@types/ws": "^8.5.5",
+        "ws": "^8.13.0"
+    },
+    "scripts": {
+        "install": "cd boringssl && npm i",
+        "start": "ts-node --esm src/index.ts",
+        "dev": "nodemon --esm src/index.ts",
+        "lint": "eslint .",
+        "lint:watch": "nodemon -e ts,json --exec eslint .",
+        "lint:fix": "eslint --fix .",
+        "format": "prettier . -w",
+        "build": "tsc",
+        "build:boringssl-win": "cd boringssl && npm run build-win && mkdir ../bin -p && cp ./build/win.node ../bin/boringssl.node",
+        "build:boringssl-linux": "cd boringssl && npm run build-linux && mkdir ../bin -p && cp ./build/linux.node ../bin/boringssl.node",
+        "build:boringssl-macos": "cd boringssl && npm run build-macos && mkdir ../bin -p && cp ./build/macos.node ../bin/boringssl.node"
+    },
+    "devDependencies": {
+        "@types/node": "^20.3.2",
+        "@typescript-eslint/eslint-plugin": "^5.60.1",
+        "@typescript-eslint/parser": "^5.60.1",
+        "eslint": "^8.43.0",
+        "nodemon": "^2.0.22",
+        "prettier": "^2.8.8",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.1.6"
+    }
 }
