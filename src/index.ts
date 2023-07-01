@@ -1,6 +1,7 @@
 import WebSocket from "ws";
 import net from "net";
 import { kickServer } from "./kick/KickServer.js";
+import { kickApi } from "./kick/KickApi.js";
 
 const SERVER_PORT = 8080;
 const SERVER_HOST = "localhost";
@@ -13,6 +14,7 @@ const socket = new WebSocket(
 
 kickServer.on("open", async () => {
     console.log("socket open");
+    await kickApi.initTLS();
     await kickServer.connectToChannel("xqc");
 });
 kickServer.connectSocket();

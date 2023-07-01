@@ -1,52 +1,47 @@
+import initCycleTLS, { CycleTLSClient, CycleTLSResponse } from "cycletls";
+import exitHook from 'exit-hook';
 import { require } from "../require.js";
-const { request: r } = require("../bin/boringssl.node");
-const ssl: (config: Config, _: string, __: string) => SSLResponse = r;
+const { cycles: cyclesConfig } = require("../config.json");
 
 enum HTTPMethod {
-    GET = "GET",
-    POST = "POST",
-}
-
-interface Config extends DefaultConfig {
-    uri: string;
-    method: HTTPMethod;
-    body: string;
-}
-
-interface DefaultConfig {
-    host: string;
-    headers: string[][];
-}
-
-export interface SSLResponse {
-    status: number;
-    bodyJson: string;
+    GET = "get",
+    POST = "post",
 }
 
 class KickApi {
-    private defaultConfig: DefaultConfig;
+    private static instance: KickApi;
+    private cycles: CycleTLSClient | null;
+    private config: object;
 
-    constructor() {
-        this.defaultConfig = {
-            host: "kick.com",
-            headers: [
-                [
-                    "user-agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36",
-                ],
-            ],
-        };
+    constructor(cyclesConfig: object) { 
+        if (KickApi.instance) throw new Error("Cannot instantiate singleton more than once, use .getInstance()")
+        KickApi.instance = this;
+
+        this.cycles = null;
+        this.config = cyclesConfig;
     }
 
-    async request(method: HTTPMethod, endpoint: string, body = "") {
-        const config: Config = {
-            ...this.defaultConfig,
-            uri: new URL(endpoint, "https://kick.com").href,
-            method,
-            body,
-        };
+    getInstance() {
+        return KickApi.instance;
+    }
+    
+    async initTLS() {
+        if (this.cycles) throw new Error("CyclesTLS already initialized");
 
-        return await ssl(config, "", "");
+        this.cycles = await initCycleTLS.default()
+        console.log("initialize cycles");
+    }
+
+    async closeCycles() {
+        await this.cycles?.exit();
+    }
+
+    async request(method: HTTPMethod, endpoint: string, body?: string) {
+        if (!this.cycles) return {} as CycleTLSResponse;
+        return await this.cycles(new URL(endpoint, "https://kick.com").href, {
+            ...this.config,
+            body
+        }, method)
     }
 
     async get(endpoint: string) {
@@ -62,4 +57,9 @@ class KickApi {
     }
 }
 
-export const kickApi = new KickApi();
+export const kickApi = new KickApi(cyclesConfig);
+
+exitHook(async () => {
+    await kickApi.closeCycles();
+    console.log("closed cycles");
+});

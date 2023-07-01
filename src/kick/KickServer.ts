@@ -1,6 +1,7 @@
 import EventEmitter from "events";
 import WebSocket, { CloseEvent, ErrorEvent, Event, MessageEvent } from "ws";
 import { kickApi } from "./KickApi.js";
+import { CycleTLSResponse } from "cycletls";
 
 enum ChannelStatus {
     CONNECTING,
@@ -110,8 +111,9 @@ class KickServer extends EventEmitter {
     }
 
     async connectToChannel(channel: string) {
-        const { bodyJson } = await kickApi.getChannel(channel);
-        const { id }: {id: number} = JSON.parse(bodyJson);
+        const res: CycleTLSResponse = await kickApi.getChannel(channel);
+        if (res === {} as CycleTLSResponse || typeof res.body !== "object") return;
+        const { id } = res.body;
 
         if (!id) {
             throw new Error("Missing 'id' field in response");

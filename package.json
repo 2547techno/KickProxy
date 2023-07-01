@@ -7,6 +7,8 @@
     "type": "module",
     "dependencies": {
         "@types/ws": "^8.5.5",
+        "cycletls": "^1.0.21",
+        "exit-hook": "^3.2.0",
         "ws": "^8.13.0"
     },
     "scripts": {
@@ -16,10 +18,7 @@
         "lint:watch": "nodemon -e ts,json --exec eslint .",
         "lint:fix": "eslint --fix .",
         "format": "prettier . -w",
-        "build": "tsc",
-        "build:boringssl-win": "cd boringssl && npm i && npm run build-win && mkdir ../bin -p && cp ./build/win.node ../bin/boringssl.node",
-        "build:boringssl-linux": "cd boringssl && npm i && npm run build-linux && mkdir ../bin -p && cp ./build/linux.node ../bin/boringssl.node",
-        "build:boringssl-macos": "cd boringssl && npm i && npm run build-macos && mkdir ../bin -p && cp ./build/macos.node ../bin/boringssl.node"
+        "build": "tsc"
     },
     "devDependencies": {
         "@types/node": "^20.3.2",
