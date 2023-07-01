@@ -10,7 +10,6 @@
         "ws": "^8.13.0"
     },
     "scripts": {
-        "install": "cd boringssl && npm i",
         "start": "ts-node --esm src/index.ts",
         "dev": "nodemon --esm src/index.ts",
         "lint": "eslint .",
@@ -18,9 +17,9 @@
         "lint:fix": "eslint --fix .",
         "format": "prettier . -w",
         "build": "tsc",
-        "build:boringssl-win": "cd boringssl && npm run build-win && mkdir ../bin -p && cp ./build/win.node ../bin/boringssl.node",
-        "build:boringssl-linux": "cd boringssl && npm run build-linux && mkdir ../bin -p && cp ./build/linux.node ../bin/boringssl.node",
-        "build:boringssl-macos": "cd boringssl && npm run build-macos && mkdir ../bin -p && cp ./build/macos.node ../bin/boringssl.node"
+        "build:boringssl-win": "cd boringssl && npm i && npm run build-win && mkdir ../bin -p && cp ./build/win.node ../bin/boringssl.node",
+        "build:boringssl-linux": "cd boringssl && npm i && npm run build-linux && mkdir ../bin -p && cp ./build/linux.node ../bin/boringssl.node",
+        "build:boringssl-macos": "cd boringssl && npm i && npm run build-macos && mkdir ../bin -p && cp ./build/macos.node ../bin/boringssl.node"
     },
     "devDependencies": {
         "@types/node": "^20.3.2",
