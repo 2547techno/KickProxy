@@ -34,6 +34,7 @@ class KickApi {
 
     async closeCycles() {
         await this.cycles?.exit();
+        console.log("closed cycles");
     }
 
     async request(method: HTTPMethod, endpoint: string, body?: string) {
@@ -61,5 +62,4 @@ export const kickApi = new KickApi(cyclesConfig);
 
 exitHook(async () => {
     await kickApi.closeCycles();
-    console.log("closed cycles");
 });

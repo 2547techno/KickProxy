@@ -16,6 +16,7 @@ kickServer.on("open", async () => {
     console.log("socket open");
     await kickApi.initTLS();
     await kickServer.connectToChannel("xqc");
+    await kickApi.closeCycles();
 });
 kickServer.connectSocket();
 
