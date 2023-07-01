@@ -24,15 +24,16 @@ class KickServer extends EventEmitter {
     connectSocket() {
         this.socket = new WebSocket("wss://ws-us2.pusher.com/app/eb1d5f283081a78b932c?protocol=7&client=js&version=7.6.0&flash=false");
 
-        this.socket.onopen = (event: Event) => {
-            this.emit("open", event)
-        }
+        this.socket.onopen = (event: Event) => this.emit("open", event);
+        this.socket.onerror = (event: ErrorEvent) => this.emit("error", event);
+        this.socket.onclose = (event: CloseEvent) => this.emit("close", event);
+        
         this.socket.onmessage = (event: MessageEvent) => {
             this.emit("message", event)
             let data: any;
             try {
                 data = JSON.parse(event.data as string)
-                console.log(data);
+                // console.log(data);
             } catch (err) {
                 console.error("Couldn't parse message ", (err as Error).message);
                 return;
@@ -47,12 +48,6 @@ class KickServer extends EventEmitter {
 
                 this.event.emit("channel_connect", parseInt(match[1]))
             }
-        }
-        this.socket.onerror = (event: ErrorEvent) => {
-            this.emit("error", event)
-        }
-        this.socket.onclose = (event: CloseEvent) => {
-            this.emit("close", event)
         }
     }
 
