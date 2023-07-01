@@ -1,6 +1,6 @@
 import { require } from "./require.js";
-const { request } = require("../bin/boringssl.node");
-const ssl: (config: Config, _: string, __: string) => SSLResponse = request;
+const { request: r } = require("../bin/boringssl.node");
+const ssl: (config: Config, _: string, __: string) => SSLResponse = r;
 
 enum HTTPMethod {
     GET,
