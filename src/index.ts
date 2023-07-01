@@ -1,7 +1,6 @@
 import WebSocket from "ws";
 import net from "net";
-
-import { KickApi } from "./KickApi.js";
+import { kickServer } from "./kick/KickServer.js";
 
 const SERVER_PORT = 8080;
 const SERVER_HOST = "localhost";
@@ -11,6 +10,13 @@ const USER_LOGIN = "xqc";
 const socket = new WebSocket(
     "wss://ws-us2.pusher.com/app/eb1d5f283081a78b932c?protocol=7&client=js&version=7.6.0&flash=false"
 );
+
+kickServer.on("open", async () => {
+    console.log("socket open");
+    await kickServer.connectToChannel("xqc");
+    await kickServer.connectToChannel("xqc");
+})
+kickServer.connectSocket()
 
 let state = 0;
 const clients: any[] = [];

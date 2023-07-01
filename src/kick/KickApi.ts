@@ -1,10 +1,10 @@
-import { require } from "./require.js";
+import { require } from "../require.js";
 const { request: r } = require("../bin/boringssl.node");
 const ssl: (config: Config, _: string, __: string) => SSLResponse = r;
 
 enum HTTPMethod {
-    GET,
-    POST,
+    GET = "GET",
+    POST  = "POST",
 }
 
 interface Config extends DefaultConfig {
@@ -23,7 +23,7 @@ export interface SSLResponse {
     bodyJson: string;
 }
 
-export class KickApi {
+class KickApi {
     private defaultConfig: DefaultConfig;
 
     constructor() {
@@ -56,4 +56,10 @@ export class KickApi {
     async post(endpoint: string, body: string) {
         return await this.request(HTTPMethod.POST, endpoint, body);
     }
+
+    async getChannel(channel: string) {
+        return await this.get(`api/v2/channels/${channel}`)
+    }
 }
+
+export const kickApi = new KickApi();
