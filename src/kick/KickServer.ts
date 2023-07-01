@@ -27,7 +27,7 @@ class KickServer extends EventEmitter {
         this.socket.onopen = (event: Event) => this.emit("open", event);
         this.socket.onerror = (event: ErrorEvent) => this.emit("error", event);
         this.socket.onclose = (event: CloseEvent) => this.emit("close", event);
-        
+
         this.socket.onmessage = (event: MessageEvent) => {
             this.emit("message", event)
             let data: any;
@@ -79,6 +79,7 @@ class KickServer extends EventEmitter {
             const timeout = setTimeout(() => {
                 this.channels.delete(channelId)
                 console.error(`Timed out subscribing to 'chatrooms.${channelId}.v2'`)
+                return rej()
             }, 5000);
             
             // {"event":"pusher_internal:subscription_succeeded","data":"{}","channel":"chatrooms.668.v2"}
