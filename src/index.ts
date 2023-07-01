@@ -14,7 +14,6 @@ const socket = new WebSocket(
 kickServer.on("open", async () => {
     console.log("socket open");
     await kickServer.connectToChannel("xqc");
-    await kickServer.connectToChannel("xqc");
 });
 kickServer.connectSocket();
 

@@ -7,6 +7,19 @@ enum ChannelStatus {
     CONNECTED
 }
 
+interface PusherEventMessage {
+    event: PusherEvent;
+    data: object;
+    channel: string;
+}
+
+enum PusherEvent {
+    CONNECTION_ESTABLISHED = "pusher:connection_established",
+    SUBSCRIPTION_SUCCEEDED = "pusher_internal:subscription_succeeded",
+    CHAT_MESSAGE = "App\\Events\\ChatMessageEvent",
+    PONG = "pusher:pong"
+}
+
 class KickServer extends EventEmitter {
     pusherUri: string;
     socket: WebSocket | null;
@@ -30,24 +43,19 @@ class KickServer extends EventEmitter {
 
         this.socket.onmessage = (event: MessageEvent) => {
             this.emit("message", event);
-            let data: any;
+            let eventMessage: PusherEventMessage;
             try {
-                data = JSON.parse(event.data as string);
-                // console.log(data);
+                eventMessage = JSON.parse(event.data as string);
             } catch (err) {
                 console.error("Couldn't parse message ", (err as Error).message);
                 return;
             }
 
-            if (data.event === "pusher_internal:subscription_succeeded" && data.channel) {
-                // chatrooms.668.v2
-                const channelIdRegex = /^chatrooms\.(\d+)\.v2$/m;
-
-                const match = data.channel.match(channelIdRegex);
-                if(!match) return;
-
-                this.event.emit("channel_connect", parseInt(match[1]));
-            }
+            this.event.emit(eventMessage.event, {
+                event: eventMessage.event,
+                data: eventMessage.data,
+                channel: eventMessage.channel,
+            })
         };
     }
 
@@ -83,7 +91,12 @@ class KickServer extends EventEmitter {
             }, 5000);
             
             // {"event":"pusher_internal:subscription_succeeded","data":"{}","channel":"chatrooms.668.v2"}
-            this.event.on("channel_connect", (cid: number) => {
+            this.event.on(PusherEvent.SUBSCRIPTION_SUCCEEDED, (msg: PusherEventMessage) => {
+                const channelIdRegex = /^chatrooms\.(\d+)\.v2$/m;
+                const match = msg.channel.match(channelIdRegex);
+                if(!match) return;
+
+                const cid = parseInt(match[1]);
                 if (cid === channelId) {
                     clearTimeout(timeout);
                     this.channels.set(channelId, ChannelStatus.CONNECTED);
