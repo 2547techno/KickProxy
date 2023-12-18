@@ -1,5 +1,6 @@
 import EventEmitter from "events";
 import { Server, Socket, createServer } from "net";
+import { parse } from "irc-message-ts";
 
 interface Client {
     socket: Socket;
@@ -64,17 +65,29 @@ class IrcServer extends EventEmitter {
         socket.write("Connected to proxy!\r\nType /raw JOIN #channel to connect to a channel!\r\n");
 
         socket.on("data", data => {
-            console.log(data.toString())
-            if (data.toString().startsWith("JOIN #")) {
-                const channel = data.toString().substring("JOIN #".length).split(" ")[0].replace(/\r|\n/gi, "")
-                socket.write(`Joining #${channel} ...\r\n`)
-                this.joinChannel(client, channel)
-                socket.write(`Joined #${channel} !\r\n`)
-            } else if (data.toString().startsWith("PART #")) {
-                const channel = data.toString().substring("JOIN #".length).split(" ")[0].replace(/\r|\n/gi, "")
-                socket.write(`Parting #${channel} ...\r\n`)
-                this.partChannel(client, channel)
-                socket.write(`Parted #${channel} !\r\n`)
+            const parsed = parse(data.toString())
+            switch (parsed?.command) {
+                case "JOIN": {
+                    const channel = parsed.param.substring(1).replace(/\r|\n/gi, "")
+                    socket.write(`Joining #${channel} ...\r\n`)
+                    this.joinChannel(client, channel)
+                    socket.write(`Joined #${channel} !\r\n`)
+                    break;
+                }
+                case "PART": {
+                    const channel = parsed.param.substring(1).replace(/\r|\n/gi, "")
+                    socket.write(`Parting #${channel} ...\r\n`)
+                    this.partChannel(client, channel)
+                    socket.write(`Parted #${channel} !\r\n`)
+                    break;
+                }
+                case "PRIVMSG": {
+                    console.log(data.toString());
+                }
+                default:
+                    console.log(data.toString());
+                    socket.write(`Invalid message type: ${parsed?.command}\r\n`)
+                    break;
             }
         });
         socket.on("end", () => null);
