@@ -1,5 +1,5 @@
 import initCycleTLS, { CycleTLSClient, CycleTLSResponse } from "cycletls";
-import exitHook from 'exit-hook';
+import exitHook from "exit-hook";
 import { require } from "../require.js";
 const { cycles: cyclesConfig } = require("../config.json");
 
@@ -13,8 +13,11 @@ class KickApi {
     private cycles: CycleTLSClient | null;
     private config: object;
 
-    constructor(cyclesConfig: object) { 
-        if (KickApi.instance) throw new Error("Cannot instantiate singleton more than once, use .getInstance()")
+    constructor(cyclesConfig: object) {
+        if (KickApi.instance)
+            throw new Error(
+                "Cannot instantiate singleton more than once, use .getInstance()"
+            );
         KickApi.instance = this;
 
         this.cycles = null;
@@ -24,11 +27,11 @@ class KickApi {
     getInstance() {
         return KickApi.instance;
     }
-    
+
     async initTLS() {
         if (this.cycles) throw new Error("CyclesTLS already initialized");
 
-        this.cycles = await initCycleTLS.default()
+        this.cycles = await initCycleTLS.default();
         console.log("initialize cycles");
     }
 
@@ -39,10 +42,14 @@ class KickApi {
 
     async request(method: HTTPMethod, endpoint: string, body?: string) {
         if (!this.cycles) return {} as CycleTLSResponse;
-        return await this.cycles(new URL(endpoint, "https://kick.com").href, {
-            ...this.config,
-            body
-        }, method)
+        return await this.cycles(
+            new URL(endpoint, "https://kick.com").href,
+            {
+                ...this.config,
+                body,
+            },
+            method
+        );
     }
 
     async get(endpoint: string) {

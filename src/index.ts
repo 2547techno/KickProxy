@@ -11,10 +11,10 @@ kickServer.on("open", async () => {
     await kickApi.initTLS();
     // await kickServer.connectToChannel("xqc");
     // await kickApi.closeCycles();
-    irc.start()
+    irc.start();
 });
 kickServer.connectSocket();
 
-irc.on("start", () =>{
-    console.log("irc start")
-})
+irc.on("start", () => {
+    console.log("irc start");
+});

@@ -19,6 +19,7 @@
         "lint:watch": "nodemon -e ts,json --exec eslint .",
         "lint:fix": "eslint --fix .",
         "format": "prettier . -w",
+        "format:all": "npm run lint:fix && npm run format",
         "build": "tsc"
     },
     "devDependencies": {

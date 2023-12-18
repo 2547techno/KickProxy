@@ -20,83 +20,102 @@ class IrcServer extends EventEmitter {
         this.host = host;
         this.port = port;
         this.clients = [];
-        this.channelMap = new Map<string, Set<Client>>()
+        this.channelMap = new Map<string, Set<Client>>();
         this.server = createServer(this.handleConnection.bind(this));
         setInterval(() => {
             // console.log(this.clients.map(c => c.channels));
             // console.log(this.channelMap);
-            for(const client of this.clients) {
-                client.channels.forEach(channel => {
-                    client.socket.write(`:echo PRIVMSG #${channel} :echo${Math.floor(Math.random()*100)}\r\n`)
-                })
+            for (const client of this.clients) {
+                client.channels.forEach((channel) => {
+                    client.socket.write(
+                        `:echo PRIVMSG #${channel} :echo${Math.floor(
+                            Math.random() * 100
+                        )}\r\n`
+                    );
+                });
             }
-        }, 2000)
+        }, 2000);
     }
 
     start() {
-        this.server.listen(this.port, this.host, () => this.emit("start"))
+        this.server.listen(this.port, this.host, () => this.emit("start"));
     }
 
     joinChannel(client: Client, channel: string) {
-        client.channels.add(channel)
+        client.channels.add(channel);
         if (!this.channelMap.has(channel)) {
-            this.channelMap.set(channel, new Set<Client>())
-            this.emit("add", channel)
+            this.channelMap.set(channel, new Set<Client>());
+            this.emit("add", channel);
         }
-        this.channelMap.get(channel)?.add(client)
+        this.channelMap.get(channel)?.add(client);
     }
 
     partChannel(client: Client, channel: string) {
-        client.channels.delete(channel)
-        this.channelMap.get(channel)?.delete(client)
+        client.channels.delete(channel);
+        this.channelMap.get(channel)?.delete(client);
         if (this.channelMap.get(channel)?.size == 0) {
-            this.channelMap.delete(channel)
-            this.emit("delete", channel)
+            this.channelMap.delete(channel);
+            this.emit("delete", channel);
         }
     }
 
     handleConnection(socket: Socket) {
-        console.log(`New client connected: ${socket.remoteAddress}:${socket.remotePort}`);
+        console.log(
+            `New client connected: ${socket.remoteAddress}:${socket.remotePort}`
+        );
         const client: Client = {
             socket,
             nick: "anon",
-            channels: new Set<string>()
-        }
+            channels: new Set<string>(),
+        };
         this.clients.push(client);
 
-        socket.write("Connected to proxy!\r\nType /raw JOIN #channel to connect to a channel!\r\n");
+        socket.write(
+            "Connected to proxy!\r\nType /raw JOIN #channel to connect to a channel!\r\n"
+        );
 
-        socket.on("data", data => {
-            const parsed = parse(data.toString())
+        socket.on("data", (data) => {
+            const parsed = parse(data.toString());
             switch (parsed?.command) {
                 case "CAP":
                 case "NICK":
                 case "USER":
                     break;
                 case "JOIN": {
-                    const channel = parsed.param.substring(1).replace(/\r|\n/gi, "")
-                    socket.write(`Joining #${channel} ...\r\n`)
-                    this.joinChannel(client, channel)
-                    socket.write(`Joined #${channel} !\r\n`)
+                    const channel = parsed.param
+                        .substring(1)
+                        .replace(/\r|\n/gi, "");
+                    socket.write(`Joining #${channel} ...\r\n`);
+                    this.joinChannel(client, channel);
+                    socket.write(`Joined #${channel} !\r\n`);
                     break;
                 }
                 case "PART": {
-                    const channel = parsed.param.substring(1).replace(/\r|\n/gi, "")
-                    socket.write(`Parting #${channel} ...\r\n`)
-                    this.partChannel(client, channel)
-                    socket.write(`Parted #${channel} !\r\n`)
+                    const channel = parsed.param
+                        .substring(1)
+                        .replace(/\r|\n/gi, "");
+                    socket.write(`Parting #${channel} ...\r\n`);
+                    this.partChannel(client, channel);
+                    socket.write(`Parted #${channel} !\r\n`);
                     break;
                 }
                 case "PRIVMSG": {
                     console.log(data.toString());
+                    break;
                 }
                 case "CHANNELS": {
-                    socket.write(`Channels joined:  ${Array.from(client.channels).map(c => `#${c}`).join(", ")}\r\n`);
+                    socket.write(
+                        `Channels joined:  ${Array.from(client.channels)
+                            .map((c) => `#${c}`)
+                            .join(", ")}\r\n`
+                    );
                     break;
                 }
                 default:
                     console.log(data.toString());
-                    socket.write(`Invalid message type: ${parsed?.command}\r\n`)
+                    socket.write(
+                        `Invalid message type: ${parsed?.command}\r\n`
+                    );
                     break;
             }
         });
