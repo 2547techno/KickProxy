@@ -90,6 +90,10 @@ class IrcServer extends EventEmitter {
                 case "PRIVMSG": {
                     console.log(data.toString());
                 }
+                case "CHANNELS": {
+                    socket.write(`Channels joined:  ${Array.from(client.channels).map(c => `#${c}`).join(", ")}\r\n`);
+                    break;
+                }
                 default:
                     console.log(data.toString());
                     socket.write(`Invalid message type: ${parsed?.command}\r\n`)
