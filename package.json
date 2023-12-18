@@ -9,6 +9,7 @@
         "@types/ws": "^8.5.5",
         "cycletls": "^1.0.21",
         "exit-hook": "^3.2.0",
+        "irc-message-ts": "^3.0.6",
         "ws": "^8.13.0"
     },
     "scripts": {
