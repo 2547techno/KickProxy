@@ -69,6 +69,10 @@ class IrcServer extends EventEmitter {
         socket.on("data", data => {
             const parsed = parse(data.toString())
             switch (parsed?.command) {
+                case "CAP":
+                case "NICK":
+                case "USER":
+                    break;
                 case "JOIN": {
                     const channel = parsed.param.substring(1).replace(/\r|\n/gi, "")
                     socket.write(`Joining #${channel} ...\r\n`)
