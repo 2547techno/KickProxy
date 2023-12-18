@@ -41,6 +41,7 @@ class IrcServer extends EventEmitter {
         client.channels.add(channel)
         if (!this.channelMap.has(channel)) {
             this.channelMap.set(channel, new Set<Client>())
+            this.emit("add", channel)
         }
         this.channelMap.get(channel)?.add(client)
     }
@@ -50,6 +51,7 @@ class IrcServer extends EventEmitter {
         this.channelMap.get(channel)?.delete(client)
         if (this.channelMap.get(channel)?.size == 0) {
             this.channelMap.delete(channel)
+            this.emit("delete", channel)
         }
     }
 
