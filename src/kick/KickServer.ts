@@ -123,8 +123,18 @@ class KickServer extends EventEmitter {
         });
     }
 
-    private async unsubscribFromChannel(channelId: number) {
-        console.log(`unsub from 'chatroom.${channelId}.v2'`);
+    private async unsubscribeFromChannel(channelId: number) {
+        this.socket?.send(
+            JSON.stringify({
+                event: "pusher:unsubscribe",
+                data: {
+                    channel: `chatrooms.${channelId}.v2`,
+                    auth: null,
+                },
+            })
+        );
+        this.channels.delete(channelId);
+        console.log(`Subscribing to chatrooms.${channelId}.v2`);
         return;
     }
 
@@ -162,7 +172,7 @@ class KickServer extends EventEmitter {
         if (!id) {
             return
         }
-        await this.unsubscribFromChannel(id);
+        await this.unsubscribeFromChannel(id);
     }
 }
 
