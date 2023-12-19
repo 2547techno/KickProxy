@@ -1,6 +1,7 @@
 import initCycleTLS, { CycleTLSClient, CycleTLSResponse } from "cycletls";
 import exitHook from "exit-hook";
 import { require } from "../require.js";
+import { logger } from "../logs.js";
 const { cycles: cyclesConfig } = require("../config.json");
 
 enum HTTPMethod {
@@ -32,12 +33,12 @@ class KickApi {
         if (this.cycles) throw new Error("CyclesTLS already initialized");
 
         this.cycles = await initCycleTLS.default();
-        console.log("initialize cycles");
+        logger.log("CYCLES", "Initialized");
     }
-
+    
     async closeCycles() {
         await this.cycles?.exit();
-        console.log("closed cycles");
+        logger.log("CYCLES", "Closed");
     }
 
     async request(method: HTTPMethod, endpoint: string, body?: string) {

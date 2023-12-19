@@ -5,9 +5,10 @@ import {
 } from "./kick/KickServer.js";
 import { kickApi } from "./kick/KickApi.js";
 import { irc } from "./irc/IrcServer.js";
+import { logger } from "./logs.js";
 
 irc.on("start", () => {
-    console.log("irc start");
+    logger.log("IRC", "Started");
 });
 
 irc.on("add", async (channel: string) => {
@@ -19,7 +20,7 @@ irc.on("delete", async (channel: string) => {
 });
 
 kickServer.on("open", async () => {
-    console.log("socket open");
+    logger.log("KICK-SERVER", "Started");
     await kickApi.initTLS();
     irc.start();
 });

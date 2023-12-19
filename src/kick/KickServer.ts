@@ -2,6 +2,7 @@ import EventEmitter from "events";
 import WebSocket, { CloseEvent, ErrorEvent, Event, MessageEvent } from "ws";
 import { kickApi } from "./KickApi.js";
 import { CycleTLSResponse } from "cycletls";
+import { logger } from "../logs.js";
 
 enum ChannelStatus {
     CONNECTING,
@@ -78,7 +79,7 @@ class KickServer extends EventEmitter {
     // {"event":"pusher:subscribe","data":{"auth":"","channel":"chatrooms.668.v2"}}
     private async subscribeToChannel(channelId: number) {
         if (this.channels.has(channelId)) {
-            console.log("channel already connecting/connected");
+            logger.log("KICK-SERVER", `Already connected/connecting to id ${channelId}`);
             return;
         }
 
@@ -93,13 +94,11 @@ class KickServer extends EventEmitter {
                 })
             );
             this.channels.set(channelId, ChannelStatus.CONNECTING);
-            console.log(`Subscribing to chatrooms.${channelId}.v2`);
+            logger.log("KICK-SERVER", `Subscribing to chatrooms.${channelId}.v2`);
 
             const timeout = setTimeout(() => {
                 this.channels.delete(channelId);
-                console.error(
-                    `Timed out subscribing to 'chatrooms.${channelId}.v2'`
-                );
+                logger.log("KICK-SERVER", `Timed out subscribing to 'chatrooms.${channelId}.v2'`)
                 return rej();
             }, 5000);
 
@@ -115,7 +114,7 @@ class KickServer extends EventEmitter {
                     if (cid === channelId) {
                         clearTimeout(timeout);
                         this.channels.set(channelId, ChannelStatus.CONNECTED);
-                        console.log(`Subscribed to chatrooms.${channelId}.v2`);
+                        logger.log("KICK-SERVER", `Subscribed to chatrooms.${channelId}.v2`)
                         return res(channelId);
                     }
                 }
@@ -134,7 +133,7 @@ class KickServer extends EventEmitter {
             })
         );
         this.channels.delete(channelId);
-        console.log(`Subscribing to chatrooms.${channelId}.v2`);
+        logger.log("KICK-SERVER", `Unsubscribed from chatrooms.${channelId}.v2`)
         return;
     }
 
@@ -167,7 +166,7 @@ class KickServer extends EventEmitter {
         try {
             await this.subscribeToChannel(id);
         } catch (err) {
-            console.log(err);
+            logger.log("KICK-SERVER", (err as Error).message);
         }
     }
 

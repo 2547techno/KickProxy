@@ -1,6 +1,7 @@
 import EventEmitter from "events";
 import { Server, Socket, createServer } from "net";
 import { parse } from "irc-message-ts";
+import { logger } from "../logs.js";
 
 interface Client {
     socket: Socket;
@@ -47,9 +48,7 @@ class IrcServer extends EventEmitter {
     }
 
     handleConnection(socket: Socket) {
-        console.log(
-            `New client connected: ${socket.remoteAddress}:${socket.remotePort}`
-        );
+        logger.log("IRC", `Client connected: ${socket.remoteAddress}:${socket.remotePort}`)
         const client: Client = {
             socket,
             nick: "anon",
