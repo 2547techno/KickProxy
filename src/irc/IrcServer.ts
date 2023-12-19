@@ -105,7 +105,24 @@ class IrcServer extends EventEmitter {
                     break;
             }
         });
-        socket.on("end", () => null);
+
+        const cleanUpClient = () => {
+            this.channelMap.forEach((clients, channel) => {
+                clients.delete(client);
+
+                if (clients.size === 0) {
+                    this.channelMap.delete(channel);
+                }
+            });
+
+            this.clients.splice(this.clients.indexOf(client), 1);
+
+            console.log(this.clients);
+            console.log(this.channelMap);
+        };
+
+        socket.on("error", cleanUpClient);
+        socket.on("end", cleanUpClient);
     }
 
     pushMessage(channel: string, message: string, username: string) {
