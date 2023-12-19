@@ -1,20 +1,35 @@
-import { kickServer } from "./kick/KickServer.js";
+import { PusherEvent, PusherEventMessage, kickServer } from "./kick/KickServer.js";
 import { kickApi } from "./kick/KickApi.js";
 import { irc } from "./irc/IrcServer.js";
-
-// const socket = new WebSocket(
-//     "wss://ws-us2.pusher.com/app/eb1d5f283081a78b932c?protocol=7&client=js&version=7.6.0&flash=false"
-// );
-
-kickServer.on("open", async () => {
-    console.log("socket open");
-    await kickApi.initTLS();
-    // await kickServer.connectToChannel("xqc");
-    // await kickApi.closeCycles();
-    irc.start();
-});
-kickServer.connectSocket();
 
 irc.on("start", () => {
     console.log("irc start");
 });
+
+irc.on("add", async (channel: string) => {
+    await kickServer.connectToChannel(channel)
+})
+
+irc.on("delete", async (channel: string) => {
+    await kickServer.disconnectFromChannel(channel);
+})
+
+kickServer.on("open", async () => {
+    console.log("socket open");
+    await kickApi.initTLS();
+    irc.start();
+});
+
+kickServer.event.on(PusherEvent.CHAT_MESSAGE, (msg: PusherEventMessage) => {
+    console.log(msg);
+
+    const data = JSON.parse(msg.data);
+    if (!data) {
+        return;
+    }
+
+    console.log(data);
+    irc.pushMessage(kickServer.idToChannel.get(data.chatroom_id) ?? "", data.content, data.sender.username);
+})
+
+kickServer.connectSocket();

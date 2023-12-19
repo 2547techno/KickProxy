@@ -22,19 +22,6 @@ class IrcServer extends EventEmitter {
         this.clients = [];
         this.channelMap = new Map<string, Set<Client>>();
         this.server = createServer(this.handleConnection.bind(this));
-        setInterval(() => {
-            // console.log(this.clients.map(c => c.channels));
-            // console.log(this.channelMap);
-            for (const client of this.clients) {
-                client.channels.forEach((channel) => {
-                    client.socket.write(
-                        `:echo PRIVMSG #${channel} :echo${Math.floor(
-                            Math.random() * 100
-                        )}\r\n`
-                    );
-                });
-            }
-        }, 2000);
     }
 
     start() {
@@ -120,6 +107,14 @@ class IrcServer extends EventEmitter {
             }
         });
         socket.on("end", () => null);
+    }
+
+    pushMessage(channel: string, message: string, username: string) {
+        const clients = this.channelMap.get(channel) ?? [];
+
+        for (const client of clients) {
+            client.socket.write(`:${username} PRIVMSG #${channel.toLowerCase()} :${message}\r\n`);
+        }
     }
 
     stop() {

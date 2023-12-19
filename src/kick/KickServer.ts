@@ -8,13 +8,13 @@ enum ChannelStatus {
     CONNECTED,
 }
 
-interface PusherEventMessage {
+export interface PusherEventMessage {
     event: PusherEvent;
-    data: object;
+    data: string;
     channel: string;
 }
 
-enum PusherEvent {
+export enum PusherEvent {
     CONNECTION_ESTABLISHED = "pusher:connection_established",
     SUBSCRIPTION_SUCCEEDED = "pusher_internal:subscription_succeeded",
     CHAT_MESSAGE = "App\\Events\\ChatMessageEvent",
@@ -26,6 +26,8 @@ class KickServer extends EventEmitter {
     socket: WebSocket | null;
     channels: Map<number, ChannelStatus>;
     event: EventEmitter;
+    idToChannel: Map<number, string>;
+    channelToId: Map<string, number>;
 
     constructor() {
         super();
@@ -33,9 +35,11 @@ class KickServer extends EventEmitter {
             "wss://ws-us2.pusher.com/app/eb1d5f283081a78b932c?protocol=7&client=js&version=7.6.0&flash=false";
         this.socket = null;
         this.channels = new Map();
+        this.idToChannel = new Map();
+        this.channelToId = new Map();
         this.event = new EventEmitter();
     }
-
+    
     connectSocket() {
         this.socket = new WebSocket(
             "wss://ws-us2.pusher.com/app/eb1d5f283081a78b932c?protocol=7&client=js&version=7.6.0&flash=false"
@@ -119,17 +123,46 @@ class KickServer extends EventEmitter {
         });
     }
 
-    async connectToChannel(channel: string) {
+    private async unsubscribFromChannel(channelId: number) {
+        console.log(`unsub from 'chatroom.${channelId}.v2'`);
+        return;
+    }
+
+    async getChannelId(channel: string) {
+        const cachedId = this.channelToId.get(channel)
+        if (cachedId && this.idToChannel.get(cachedId) === channel) {
+            return cachedId;
+        }
+
         const res: CycleTLSResponse = await kickApi.getChannel(channel);
         if (res === ({} as CycleTLSResponse) || typeof res.body !== "object")
             return;
-        const { id } = res.body;
+        const id: number = res.body.chatroom?.id;
 
         if (!id) {
-            throw new Error("Missing 'id' field in response");
+            throw new Error("Missing 'chatroom.id' field in response");
         }
 
+        this.idToChannel.set(id, channel);
+        this.channelToId.set(channel, id);
+
+        return id
+    }
+
+    async connectToChannel(channel: string) {
+        const id = await this.getChannelId(channel);
+        if (!id) {
+            return
+        }
         await this.subscribeToChannel(id);
+    }
+
+    async disconnectFromChannel(channel: string) {
+        const id = await this.getChannelId(channel);
+        if (!id) {
+            return
+        }
+        await this.unsubscribFromChannel(id);
     }
 }
 
