@@ -164,7 +164,11 @@ class KickServer extends EventEmitter {
         if (!id) {
             return
         }
-        await this.subscribeToChannel(id);
+        try {
+            await this.subscribeToChannel(id);
+        } catch(err) {
+            console.log(err);
+        }
     }
 
     async disconnectFromChannel(channel: string) {
