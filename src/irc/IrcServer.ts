@@ -87,7 +87,7 @@ class IrcServer extends EventEmitter {
                     break;
                 }
                 case "PRIVMSG": {
-                    console.log(data.toString());
+                    // console.log(data.toString());
                     break;
                 }
                 case "CHANNELS": {
@@ -99,7 +99,7 @@ class IrcServer extends EventEmitter {
                     break;
                 }
                 default:
-                    console.log(data.toString());
+                    // console.log(data.toString());
                     socket.write(
                         `Invalid message type: ${parsed?.command}\r\n`
                     );
@@ -113,7 +113,9 @@ class IrcServer extends EventEmitter {
         const clients = this.channelMap.get(channel) ?? [];
 
         for (const client of clients) {
-            client.socket.write(`:${username} PRIVMSG #${channel.toLowerCase()} :${message}\r\n`);
+            client.socket.write(
+                `:${username} PRIVMSG #${channel.toLowerCase()} :${message}\r\n`
+            );
         }
     }
 

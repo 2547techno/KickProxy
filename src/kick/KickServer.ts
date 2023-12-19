@@ -39,7 +39,7 @@ class KickServer extends EventEmitter {
         this.channelToId = new Map();
         this.event = new EventEmitter();
     }
-    
+
     connectSocket() {
         this.socket = new WebSocket(
             "wss://ws-us2.pusher.com/app/eb1d5f283081a78b932c?protocol=7&client=js&version=7.6.0&flash=false"
@@ -139,7 +139,7 @@ class KickServer extends EventEmitter {
     }
 
     async getChannelId(channel: string) {
-        const cachedId = this.channelToId.get(channel)
+        const cachedId = this.channelToId.get(channel);
         if (cachedId && this.idToChannel.get(cachedId) === channel) {
             return cachedId;
         }
@@ -156,17 +156,17 @@ class KickServer extends EventEmitter {
         this.idToChannel.set(id, channel);
         this.channelToId.set(channel, id);
 
-        return id
+        return id;
     }
 
     async connectToChannel(channel: string) {
         const id = await this.getChannelId(channel);
         if (!id) {
-            return
+            return;
         }
         try {
             await this.subscribeToChannel(id);
-        } catch(err) {
+        } catch (err) {
             console.log(err);
         }
     }
@@ -174,7 +174,7 @@ class KickServer extends EventEmitter {
     async disconnectFromChannel(channel: string) {
         const id = await this.getChannelId(channel);
         if (!id) {
-            return
+            return;
         }
         await this.unsubscribeFromChannel(id);
     }

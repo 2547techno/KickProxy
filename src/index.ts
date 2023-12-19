@@ -1,4 +1,8 @@
-import { PusherEvent, PusherEventMessage, kickServer } from "./kick/KickServer.js";
+import {
+    PusherEvent,
+    PusherEventMessage,
+    kickServer,
+} from "./kick/KickServer.js";
 import { kickApi } from "./kick/KickApi.js";
 import { irc } from "./irc/IrcServer.js";
 
@@ -7,12 +11,12 @@ irc.on("start", () => {
 });
 
 irc.on("add", async (channel: string) => {
-    await kickServer.connectToChannel(channel)
-})
+    await kickServer.connectToChannel(channel);
+});
 
 irc.on("delete", async (channel: string) => {
     await kickServer.disconnectFromChannel(channel);
-})
+});
 
 kickServer.on("open", async () => {
     console.log("socket open");
@@ -21,15 +25,16 @@ kickServer.on("open", async () => {
 });
 
 kickServer.event.on(PusherEvent.CHAT_MESSAGE, (msg: PusherEventMessage) => {
-    console.log(msg);
-
     const data = JSON.parse(msg.data);
     if (!data) {
         return;
     }
 
-    console.log(data);
-    irc.pushMessage(kickServer.idToChannel.get(data.chatroom_id) ?? "", data.content, data.sender.username);
-})
+    irc.pushMessage(
+        kickServer.idToChannel.get(data.chatroom_id) ?? "",
+        data.content,
+        data.sender.username
+    );
+});
 
 kickServer.connectSocket();
