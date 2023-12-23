@@ -48,7 +48,10 @@ class IrcServer extends EventEmitter {
     }
 
     handleConnection(socket: Socket) {
-        logger.log("IRC", `Client connected: ${socket.remoteAddress}:${socket.remotePort}`)
+        logger.log(
+            "IRC",
+            `Client connected: ${socket.remoteAddress}:${socket.remotePort}`
+        );
         const client: Client = {
             socket,
             nick: "anon",

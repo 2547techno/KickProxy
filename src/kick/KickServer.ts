@@ -79,7 +79,10 @@ class KickServer extends EventEmitter {
     // {"event":"pusher:subscribe","data":{"auth":"","channel":"chatrooms.668.v2"}}
     private async subscribeToChannel(channelId: number) {
         if (this.channels.has(channelId)) {
-            logger.log("KICK-SERVER", `Already connected/connecting to id ${channelId}`);
+            logger.log(
+                "KICK-SERVER",
+                `Already connected/connecting to id ${channelId}`
+            );
             return;
         }
 
@@ -94,11 +97,17 @@ class KickServer extends EventEmitter {
                 })
             );
             this.channels.set(channelId, ChannelStatus.CONNECTING);
-            logger.log("KICK-SERVER", `Subscribing to chatrooms.${channelId}.v2`);
+            logger.log(
+                "KICK-SERVER",
+                `Subscribing to chatrooms.${channelId}.v2`
+            );
 
             const timeout = setTimeout(() => {
                 this.channels.delete(channelId);
-                logger.log("KICK-SERVER", `Timed out subscribing to 'chatrooms.${channelId}.v2'`)
+                logger.log(
+                    "KICK-SERVER",
+                    `Timed out subscribing to 'chatrooms.${channelId}.v2'`
+                );
                 return rej();
             }, 5000);
 
@@ -114,7 +123,10 @@ class KickServer extends EventEmitter {
                     if (cid === channelId) {
                         clearTimeout(timeout);
                         this.channels.set(channelId, ChannelStatus.CONNECTED);
-                        logger.log("KICK-SERVER", `Subscribed to chatrooms.${channelId}.v2`)
+                        logger.log(
+                            "KICK-SERVER",
+                            `Subscribed to chatrooms.${channelId}.v2`
+                        );
                         return res(channelId);
                     }
                 }
@@ -133,7 +145,10 @@ class KickServer extends EventEmitter {
             })
         );
         this.channels.delete(channelId);
-        logger.log("KICK-SERVER", `Unsubscribed from chatrooms.${channelId}.v2`)
+        logger.log(
+            "KICK-SERVER",
+            `Unsubscribed from chatrooms.${channelId}.v2`
+        );
         return;
     }
 

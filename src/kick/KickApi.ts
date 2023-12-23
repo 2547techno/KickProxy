@@ -35,7 +35,7 @@ class KickApi {
         this.cycles = await initCycleTLS.default();
         logger.log("CYCLES", "Initialized");
     }
-    
+
     async closeCycles() {
         await this.cycles?.exit();
         logger.log("CYCLES", "Closed");
