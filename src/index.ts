@@ -7,8 +7,8 @@ import { kickApi } from "./kick/KickApi.js";
 import { irc } from "./irc/IrcServer.js";
 import { logger } from "./logs.js";
 
-irc.on("start", () => {
-    logger.log("IRC", "Started");
+irc.on("start", (port: number) => {
+    logger.log("IRC", `Started on port: ${port}`);
 });
 
 irc.on("add", async (channel: string) => {

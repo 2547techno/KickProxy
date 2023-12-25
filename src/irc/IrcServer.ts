@@ -28,7 +28,9 @@ class IrcServer extends EventEmitter {
     }
 
     start() {
-        this.server.listen(this.port, this.host, () => this.emit("start"));
+        this.server.listen(this.port, this.host, () =>
+            this.emit("start", this.port)
+        );
     }
 
     joinChannel(client: Client, channel: string) {
@@ -162,4 +164,4 @@ class IrcServer extends EventEmitter {
     }
 }
 
-export const irc = new IrcServer("localhost", 2456);
+export const irc = new IrcServer("localhost", config.port);
