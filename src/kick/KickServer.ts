@@ -111,28 +111,31 @@ class KickServer extends EventEmitter {
                     "KICK-SERVER",
                     `Timed out subscribing to 'chatrooms.${channelId}.v2'`
                 );
+                this.event.removeListener(PusherEvent.SUBSCRIPTION_SUCCEEDED, cb);
                 return rej();
             }, 5000);
+            
+            const cb = (msg: PusherEventMessage) => {
+                const channelIdRegex = /^chatrooms\.(\d+)\.v2$/m;
+                const match = msg.channel.match(channelIdRegex);
+                if (!match) return;
+
+                const cid = parseInt(match[1]);
+                if (cid === channelId) {
+                    clearTimeout(timeout);
+                    this.channels.set(channelId, ChannelStatus.CONNECTED);
+                    logger.log(
+                        "KICK-SERVER",
+                        `Subscribed to chatrooms.${channelId}.v2`
+                    );
+                    this.event.removeListener(PusherEvent.SUBSCRIPTION_SUCCEEDED, cb);
+                    return res(channelId);
+                }
+            }
 
             // {"event":"pusher_internal:subscription_succeeded","data":"{}","channel":"chatrooms.668.v2"}
             this.event.on(
-                PusherEvent.SUBSCRIPTION_SUCCEEDED,
-                (msg: PusherEventMessage) => {
-                    const channelIdRegex = /^chatrooms\.(\d+)\.v2$/m;
-                    const match = msg.channel.match(channelIdRegex);
-                    if (!match) return;
-
-                    const cid = parseInt(match[1]);
-                    if (cid === channelId) {
-                        clearTimeout(timeout);
-                        this.channels.set(channelId, ChannelStatus.CONNECTED);
-                        logger.log(
-                            "KICK-SERVER",
-                            `Subscribed to chatrooms.${channelId}.v2`
-                        );
-                        return res(channelId);
-                    }
-                }
+                PusherEvent.SUBSCRIPTION_SUCCEEDED, cb
             );
         });
     }
