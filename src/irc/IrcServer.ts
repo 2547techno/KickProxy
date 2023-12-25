@@ -161,4 +161,4 @@ class IrcServer extends EventEmitter {
     }
 }
 
-export const irc = new IrcServer("localhost", config.port);
+export const irc = new IrcServer("0.0.0.0", config.port);
