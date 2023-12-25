@@ -139,6 +139,11 @@ class IrcServer extends EventEmitter {
                 }
             });
 
+            logger.log(
+                "IRC",
+                `Client disconnected: ${socket.remoteAddress}:${socket.remotePort}`
+            );
+
             this.clients.splice(this.clients.indexOf(client), 1);
         };
 
