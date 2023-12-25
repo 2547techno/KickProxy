@@ -69,7 +69,7 @@ class IrcServer extends EventEmitter {
 
         socket.on("data", (data) => {
             const parsed = parse(data.toString());
-            switch (parsed?.command) {
+            switch (parsed?.command?.replace(/\r|\n/gi, "")) {
                 case "CAP":
                 case "NICK":
                 case "USER":
@@ -112,6 +112,11 @@ class IrcServer extends EventEmitter {
                             .map((c) => `#${c}`)
                             .join(", ")}\r\n`
                     );
+                    break;
+                }
+                case "COMMANDS":
+                case "HELP": {
+                    socket.write(`${config.helpMessage.join("\r\n")}\r\n`);
                     break;
                 }
                 default:
