@@ -33,9 +33,13 @@ kickServer.event.on(PusherEvent.CHAT_MESSAGE, (msg: PusherEventMessage) => {
 
     irc.pushMessage(
         kickServer.idToChannel.get(data.chatroom_id) ?? "",
-        data.content,
+        parseEmotesFromMessage(data.content),
         data.sender.username
     );
 });
 
 kickServer.connectSocket();
+
+function parseEmotesFromMessage(message: string) {
+    return message.replace(/\[emote:\d+:([a-zA-Z0-9_.-]+)\]/gm, "$1 ");
+}
