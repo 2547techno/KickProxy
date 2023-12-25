@@ -28,7 +28,10 @@ class KickServer extends EventEmitter {
     channels: Map<number, ChannelStatus>;
     event: EventEmitter;
     idToChannel: Map<number, string>;
-    channelToId: Map<string, number>;
+    channelToId: Map<string, {
+        id: number,
+        expiresAt: number
+    }>;
 
     constructor() {
         super();
@@ -153,9 +156,15 @@ class KickServer extends EventEmitter {
     }
 
     async getChannelId(channel: string) {
-        const cachedId = this.channelToId.get(channel);
-        if (cachedId && this.idToChannel.get(cachedId) === channel) {
-            return cachedId;
+        // const cachedId = this.channelToId.get(channel)?.id;
+        const cached = this.channelToId.get(channel)
+        const now = new Date().getTime()
+        let expired = false;
+        if (cached?.expiresAt && cached.expiresAt < now) {
+            expired = true;
+        }
+        if (!expired && cached?.id && this.idToChannel.get(cached.id) === channel) {
+            return cached.id;
         }
 
         const res: CycleTLSResponse = await kickApi.getChannel(channel);
@@ -168,7 +177,10 @@ class KickServer extends EventEmitter {
         }
 
         this.idToChannel.set(id, channel);
-        this.channelToId.set(channel, id);
+        this.channelToId.set(channel, {
+            id,
+            expiresAt: new Date().getTime() + (60*1000) // expires in 1 minute
+        });
 
         return id;
     }

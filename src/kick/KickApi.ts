@@ -62,6 +62,7 @@ class KickApi {
     }
 
     async getChannel(channel: string) {
+        logger.log("CYCLES", `Get Channel: ${channel}`);
         return await this.get(`api/v2/channels/${channel}`);
     }
 }
