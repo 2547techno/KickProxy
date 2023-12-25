@@ -65,9 +65,7 @@ class IrcServer extends EventEmitter {
         };
         this.clients.push(client);
 
-        socket.write(
-            `${config.welcomeMessage.join("\r\n")}\r\n`
-        );
+        socket.write(`${config.welcomeMessage.join("\r\n")}\r\n`);
 
         socket.on("data", (data) => {
             const parsed = parse(data.toString());
@@ -83,8 +81,12 @@ class IrcServer extends EventEmitter {
                     socket.write(`Joining #${channel} ...\r\n`);
                     try {
                         this.joinChannel(client, channel);
-                    } catch(err) {
-                        socket.write(`Failed to join channel: ${(err as Error).message}\r\n`);
+                    } catch (err) {
+                        socket.write(
+                            `Failed to join channel: ${
+                                (err as Error).message
+                            }\r\n`
+                        );
                         break;
                     }
 
