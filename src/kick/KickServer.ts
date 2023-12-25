@@ -182,8 +182,10 @@ class KickServer extends EventEmitter {
         }
 
         const res: CycleTLSResponse = await kickApi.getChannel(channel);
-        if (res === ({} as CycleTLSResponse) || typeof res.body !== "object")
+        if (res === ({} as CycleTLSResponse) || typeof res.body !== "object") {
+            logger.log("CYCLES", `Invalid Respose\n${JSON.stringify(res)}`)
             return;
+        }
         const id: number = res.body.chatroom?.id;
 
         if (!id) {
