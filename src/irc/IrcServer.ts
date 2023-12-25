@@ -2,8 +2,8 @@ import EventEmitter from "events";
 import { Server, Socket, createServer } from "net";
 import { parse } from "irc-message-ts";
 import { logger } from "../logs.js";
-
-const MAX_CHANNELS_PER_CLIENT = 2;
+import { require } from "../require.js";
+const { irc: config } = require("../config.json");
 
 interface Client {
     socket: Socket;
@@ -32,7 +32,7 @@ class IrcServer extends EventEmitter {
     }
 
     joinChannel(client: Client, channel: string) {
-        if (client.channels.size >= MAX_CHANNELS_PER_CLIENT) {
+        if (client.channels.size >= config.maxChannelsPerClient) {
             throw new Error("Max joined channels reached!");
         }
 
@@ -66,7 +66,7 @@ class IrcServer extends EventEmitter {
         this.clients.push(client);
 
         socket.write(
-            "Connected to proxy!\r\nType /raw JOIN #channel to connect to a channel!\r\n"
+            `${config.welcomeMessage.join("\r\n")}\r\n`
         );
 
         socket.on("data", (data) => {
