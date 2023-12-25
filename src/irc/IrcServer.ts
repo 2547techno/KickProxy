@@ -3,6 +3,8 @@ import { Server, Socket, createServer } from "net";
 import { parse } from "irc-message-ts";
 import { logger } from "../logs.js";
 
+const MAX_CHANNELS_PER_CLIENT = 2;
+
 interface Client {
     socket: Socket;
     nick: string;
@@ -30,6 +32,10 @@ class IrcServer extends EventEmitter {
     }
 
     joinChannel(client: Client, channel: string) {
+        if (client.channels.size >= MAX_CHANNELS_PER_CLIENT) {
+            throw new Error("Max joined channels reached!");
+        }
+
         client.channels.add(channel);
         if (!this.channelMap.has(channel)) {
             this.channelMap.set(channel, new Set<Client>());
@@ -75,7 +81,13 @@ class IrcServer extends EventEmitter {
                         .substring(1)
                         .replace(/\r|\n/gi, "");
                     socket.write(`Joining #${channel} ...\r\n`);
-                    this.joinChannel(client, channel);
+                    try {
+                        this.joinChannel(client, channel);
+                    } catch(err) {
+                        socket.write(`Failed to join channel: ${(err as Error).message}\r\n`);
+                        break;
+                    }
+
                     socket.write(`Joined #${channel} !\r\n`);
                     break;
                 }
