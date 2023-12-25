@@ -140,9 +140,6 @@ class IrcServer extends EventEmitter {
             });
 
             this.clients.splice(this.clients.indexOf(client), 1);
-
-            console.log(this.clients);
-            console.log(this.channelMap);
         };
 
         socket.on("error", cleanUpClient);
