@@ -13,8 +13,8 @@
         "ws": "^8.13.0"
     },
     "scripts": {
-        "start": "ts-node --esm src/index.ts",
-        "dev": "nodemon --esm src/index.ts",
+        "start": "node --loader ts-node/esm ./src/index.ts",
+        "dev": "nodemon src/index.ts --exec \"node --loader ts-node/esm ./src/index.ts\"",
         "lint": "eslint .",
         "lint:watch": "nodemon -e ts,json --exec eslint .",
         "lint:fix": "eslint --fix .",
