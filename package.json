@@ -6,6 +6,7 @@
     "license": "MIT",
     "type": "module",
     "dependencies": {
+        "@pkl-community/pkl-eval": "^0.0.3",
         "@types/ws": "^8.5.5",
         "cycletls": "^1.0.21",
         "exit-hook": "^3.2.0",

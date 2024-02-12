@@ -1,0 +1,16 @@
+module schema
+
+class Cycles {
+    ja3: String
+    userAgent: String
+}
+
+class Irc {
+    port: UInt16
+    maxChannelsPerClient: UInt16(this > 0)
+    welcomeMessage: Listing<String>
+    helpMessage: Listing<String>
+}
+
+cycles: Cycles
+irc: Irc
